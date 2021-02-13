@@ -5,7 +5,9 @@ def key_formatter(inputString):
     """A simple function that polishes the input characters before they get added to the logfile"""
 
     # Any misc key needs to be ignored or adjusted properly before being added to the logfile
-    # shift is not needed - the library automatically uses the specified letter in uppercase
+    # Shift is not needed - the library automatically turns the specified letter in uppercase
+    # While shift works properly, caps lock wont switch letters to uppercase
+
     if inputString.startswith("Key."):
         if inputString == "Key.enter":
             inputString = "\n"
@@ -35,7 +37,23 @@ def key_formatter(inputString):
         else:
             inputString = ""
 
-    # While logging it's important to keep track of any CTRL-v or CTRL-c or any CTRL command -> finish me
+    # While logging, the script will keep track of any copy/paste/cut/undo operations.
+
+    if inputString.startswith("\\x"):
+        if inputString == "\\x03":
+            inputString = " CTRL_C " #copy
+        elif inputString == "\\x16":
+            inputString = " CTRL_V " #paste
+        elif inputString == "\\x1a":
+            inputString = " CTRL_Z " #undo
+        elif inputString == "\\x18":
+            inputString = " CTRL_X " #cut
+        elif inputString == "\\x01":
+            inputString = " CTRL_A " #select all
+        elif inputString == "\\x19":
+            inputString = " CTRL_Y " #redo
+        else: inputString = "" #ignore all others        
+
     return inputString
 
 
